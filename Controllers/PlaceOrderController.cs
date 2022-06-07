@@ -33,9 +33,9 @@ namespace RestaurantManagementSystem.Controllers
             string id = _userService.Id();
           /*  var userOrderInfo = new List<UserOrderInfo>();*/
             var orderHistory=new List<OrderHistory>();
-          
-           
-            UserOrderInfo userOrderInfo = new UserOrderInfo() { UserId = id};
+
+
+            var cost = 0;
             foreach (var item in order)
             {
                
@@ -44,10 +44,12 @@ namespace RestaurantManagementSystem.Controllers
                 {
                     return BadRequest(new { message="Dish with id " + item.DishId + " not found" });
                 }
+                cost += item.DishQuantity * dish.price;
                
               
              }
-           
+            UserOrderInfo userOrderInfo = new UserOrderInfo() { UserId = id, Bill = cost };
+
 
             /*  await _db.Dishes.AddRangeAsync(dishorders);*/
 

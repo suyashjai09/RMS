@@ -11,5 +11,7 @@ namespace RestaurantManagementSystem.Models
         public string UserId { get; set; }
 
         public IdentityUser User { get; set; }
+
+        public int Bill { get; set; }
     }
 }

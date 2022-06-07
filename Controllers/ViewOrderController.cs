@@ -27,15 +27,16 @@ namespace RestaurantManagementSystem.Controllers
         {
             var orderHistoryDTO = new List<OrderHistoryDTO>();
 
-           
+            List<Object> list = new List<object>();
             var id = _userService.Id();
             var res=await _db.userOrderInfos.Where(t => t.UserId == id).ToListAsync();
-            if(res==null)
+            if(res.Count==0)
                 return BadRequest("No order found against the user");
            
             foreach (var info in res)
             {
-                var data = await _db.OrderHistories.Where(t => t.OrderId == info.OrderId).ToListAsync();
+                var data = await _db.OrderHistories.Where(t => t.OrderId == info.OrderId)
+                    .Select(x => new { x.OrderId, x.DishName,x.DishQuantity,x.Dishprice,x.CreatedAt }).ToListAsync();
                 foreach (var item in data)
                 {
                     orderHistoryDTO.Add(new OrderHistoryDTO
@@ -46,13 +47,15 @@ namespace RestaurantManagementSystem.Controllers
                         Dishprice = item.Dishprice,
                         CreatedAt = item.CreatedAt
                     });
+                   
+
                 }
-
-
-               /* var groupedBlogs = data.GroupBy(t => t.OrderId).ToList();*/
+                var groupedBlogs = data.GroupBy(t => t.OrderId).ToList();
+                list.AddRange(groupedBlogs);
+               
 
             }
-            return Ok(new { orderHistoryDTO});
+            return Ok(new { data=list});
         }
        
     }
